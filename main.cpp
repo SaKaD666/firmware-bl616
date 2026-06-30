@@ -574,8 +574,7 @@ int main(void)
 
     // Initializing USB host...
     overlay_status("Initializing USB host...");
-    usbh_initialize();
-    fatfs_usbh_driver_register();
+    usbh_initialize(0, USB_BASE);
     usb_gamepad_init();
 
     overlay_status("Creating tasks...");

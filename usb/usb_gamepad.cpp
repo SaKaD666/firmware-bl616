@@ -168,14 +168,13 @@ static void usbh_update(struct usb_config *usb) {
             if (vendor_id == 0x2dc8 && product_id == 0x3107) {  // 8bitdo wireless adapter
                 skip = true;
             }
-            // DEBUG("report descriptor: %p", usb->hid_info[i].hid_class->report_desc);
-            
-            // parse report descriptor ...
-            if(skip || !parse_report_descriptor(usb->hid_info[i].hid_class->report_desc, 128, &usb->hid_info[i].report, NULL)) {
+            uint8_t report_desc_buffer[128];
+            int ret = usbh_hid_get_report_descriptor(usb->hid_info[i].hid_class, report_desc_buffer, sizeof(report_desc_buffer));
+            if(skip || ret < 0 || !parse_report_descriptor(report_desc_buffer, ret, &usb->hid_info[i].report, NULL)) {
                 usb->hid_info[i].state = STATE_FAILED;   // parsing failed, don't use
                 return;
             }
-            
+
             usb->hid_info[i].state = STATE_DETECTED;
         }
         
