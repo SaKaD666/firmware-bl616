@@ -1,6 +1,30 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-boards="console60k console138k"
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+ROOT_DIR=$(cd "$SCRIPT_DIR/.." && pwd)
+
+export PATH="$PATH:$ROOT_DIR/toolchain_gcc_t-head_macos/bin"
+
+DEFAULT_BL_SDK_BASE="$ROOT_DIR/bouffalo_sdk"
+if [ -n "${BL_SDK_BASE-}" ] && [ -d "$BL_SDK_BASE" ]; then
+    echo "Using BL_SDK_BASE from environment"
+elif [ -d "$DEFAULT_BL_SDK_BASE" ]; then
+    BL_SDK_BASE="$DEFAULT_BL_SDK_BASE"
+else
+    echo "Error: SDK path not found at $DEFAULT_BL_SDK_BASE" >&2
+    exit 1
+fi
+export BL_SDK_BASE
+
+MAKE=make
+if command -v gmake >/dev/null 2>&1; then
+    MAKE=gmake
+fi
+
+echo "Using make command: $MAKE"
+
+ boards="console60k console138k"
 # boards="console60k console138k mega60k mega138k primer25k"
 # boards="console138k"
 
@@ -10,10 +34,10 @@ rm -f buildall/* 2>/dev/null || true
 for b in $boards; do
   echo Building for board: $b
 
-  make clean
+  $MAKE clean
 
   export TANG_BOARD="$b"
-  make
+  $MAKE
 
   if [ $? -eq 0 ]; then
     echo Build successful for $b
