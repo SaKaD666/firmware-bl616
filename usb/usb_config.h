@@ -6,8 +6,7 @@
 #ifndef CHERRYUSB_CONFIG_H
 #define CHERRYUSB_CONFIG_H
 
-#define CHERRYUSB_VERSION           0x010000
-#define CHERRYUSB_VERSION_STR       "v1.0.0"
+/* CherryUSB version is defined by the SDK itself; do not redefine it here. */
 
 /* ================ USB common Configuration ================ */
 
